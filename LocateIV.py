@@ -28,10 +28,11 @@ def Find_The_IVs(img):
     pilImage.save('temp.png')
     img = cv.imread('temp.png', 0)
 
-    template = cv.imread('IV_Zero.png',0)
+    template = cv.imread('images/IV_Zero.png',0)
     w, h = template.shape[::-1]
 
     method = eval('cv.TM_CCOEFF_NORMED')
+
 
     # Apply template Matching
     res = cv.matchTemplate(img,template,method)
