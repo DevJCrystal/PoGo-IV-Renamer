@@ -1,7 +1,10 @@
 import cv2 as cv
+import numpy as np
 from PIL import Image
 
 listOfPixels = [0, 20, 43, 67, 91, 115, 133, 157, 181, 205, 229, 248, 272, 296, 320, 344]
+
+debugging = False
 
 # The y coords
 IV_Bar_Pos = [57, 160, 264]
@@ -22,24 +25,19 @@ def Find_The_IVs(img):
     hsize = int((float(img.size[1])*float(wpercent)))
     pilImage = img.resize((basewidth,hsize), Image.ANTIALIAS)
 
-    # Save the PIL image as temp.png so we can OPEN it again in CV2....
-    # I really just want to change it but the person typing this is a caveman.
-    # # img = cv.cvtColor(np.asarray(pilImage),cv.COLOR_RGB2BGR) - RIP
-    pilImage.save('temp.png')
-    img = cv.imread('temp.png', 0)
+    # Thanks Divakar! https://stackoverflow.com/a/32920586
+    adjImg = np.array(pilImage.convert('RGB'))
 
     template = cv.imread('images/IV_Zero.png',0)
     w, h = template.shape[::-1]
 
-    method = eval('cv.TM_CCOEFF_NORMED')
-
-
     # Apply template Matching
-    res = cv.matchTemplate(img,template,method)
-    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+    res = cv.matchTemplate(adjImg[:,:,0],template,cv.TM_CCOEFF_NORMED)
+
+    max_loc = cv.minMaxLoc(res)[3]
     top_left = max_loc
+
     bottom_right = (top_left[0] + w, top_left[1] + h)
-    cv.rectangle(img,top_left, bottom_right, 0, 2)
 
     # Set the bounds of the crop
     x = top_left[0]
@@ -59,17 +57,13 @@ def Find_The_IVs(img):
 
         x = 0
         y = Bar_pos
-
-        # Hmm, I should probably remove congress. 
-        # I don't remember what I was going to do with it. 
         progress = 0
-        congress = 1000
 
         while x < Max_X:
 
             # IF not whiteish then IV!
             if (abs(pix[x,y][0] - 226) <= 50 and abs(pix[x,y][1] - 226) <= 50 and abs(pix[x,y][2] - 226) <= 50):
-                congress-=1
+                progress+=0
             else:
                 progress+=1
             
@@ -80,12 +74,19 @@ def Find_The_IVs(img):
     return AllTheIV
 
 
-# This was just a fun benchmark of 3000+ screenshots from my PoGO and r/pokemongobrag
-# path = 'unsorted'
+# This was just a fun benchmark of 3000+ screenshots from my PoGo and r/pokemongobrag
+if debugging:
+    import glob
+    path = 'unsorted'
 
-# listOfImages = (glob.glob(f"{path}/*.*"))
+    listOfImages = (glob.glob(f"{path}/*.*"))
 
-# timeStart = time.time()
-# for imgFile in listOfImages:
-#     img = Image.open(imgFile)
-#     print(Find_The_IVs(img))
+    for imgFile in listOfImages:
+        img = Image.open(imgFile)
+        print(Find_The_IVs(img))
+
+# BE WARY NOT TO PASS THIS POINT. DEV RAMBLINGS HAVE BEEN SEEN. UNTOLD HORRORS CAN COME TO ANYONE THAT READS THEM.
+
+# You know.. I was orginally going to try and make this program so I can create a model for machine learning to look at your phone screen.
+# I am not sure how Calcy (Is that how it is spelt?) can figure out the IV from just look at the Pokemon in the eyes. I think it is something with CP and weight but
+# that sounds like a lot of work. So did the using machine learning for this. I even made a script to automate labeling images. I do have a model but I believe this way makes more sense. 
