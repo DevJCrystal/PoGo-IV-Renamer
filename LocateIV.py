@@ -2,12 +2,12 @@ import cv2 as cv
 import numpy as np
 from PIL import Image
 
-listOfPixels = [0, 20, 43, 67, 91, 115, 133, 157, 181, 205, 229, 248, 272, 296, 320, 344]
-
 debugging = False
 
-# The y coords
-IV_Bar_Pos = [57, 160, 264]
+# Static information
+template = cv.imread('images/IV_Zero.png',0)
+IV_Bar_Pos = [57, 160, 264] # The y coords once we find the IV bars
+listOfPixels = [0, 17, 40, 64, 88, 112, 130, 154, 188, 202, 226, 245, 269, 293, 317, 341] # 0 IV, .., 15 IV
 
 def Pixel_To_IV(pCount):
 
@@ -28,7 +28,6 @@ def Find_The_IVs(img):
     # Thanks Divakar! https://stackoverflow.com/a/32920586
     adjImg = np.array(pilImage.convert('RGB'))
 
-    template = cv.imread('images/IV_Zero.png',0)
     w, h = template.shape[::-1]
 
     # Apply template Matching
@@ -58,6 +57,7 @@ def Find_The_IVs(img):
         x = 0
         y = Bar_pos
         progress = 0
+        congress = 0
 
         while x < Max_X:
 
@@ -71,12 +71,22 @@ def Find_The_IVs(img):
             if (abs(pix[x,y][0] - 225) < 15 and abs(pix[x,y][1] - 151) < 15 and abs(pix[x,y][2] - 60) < 15) or \
                 (abs(pix[x,y][0] - 212) < 15 and abs(pix[x,y][1] - 133) < 15 and abs(pix[x,y][2] - 124) < 15):
                 progress+=1
+            elif (abs(pix[x,y][0] - 226) < 15 and abs(pix[x,y][1] - 226) < 15 and abs(pix[x,y][2] - 226) < 15):
+                congress+=1
 
             if debugging:
                 print(f"[{x},{y}] - {pix[x,y]}")
+                
             
             x+=1
 
-        AllTheIV.append(Pixel_To_IV(progress))
+        if debugging:
+            print(f'Congress: {congress} / Progress: {progress}')
+
+        if progress == 0 and congress < 50:
+            # Means IV screen is most likely not up. 
+            AllTheIV.append(-1)
+        else:
+            AllTheIV.append(Pixel_To_IV(progress))
 
     return AllTheIV

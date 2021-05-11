@@ -1,13 +1,13 @@
 import os
 #import time
 import LocateIV
-import pyautogui
+#import pyautogui
 from PIL import Image
 
 # Fancy list for renaming
 # Might want to make this a csv so more fonts/ascii styling can be used. 
 # TODO: Create CSV so it is easy to add and configure style. 
-list_Of_IV_Numbers = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮']
+list_Of_IV_Numbers = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮', 'Error']
 
 stringFinder = 'findstr' if os.name == 'nt' else 'grep'
 move = 'move' if os.name == 'nt' else 'mv'
@@ -88,10 +88,10 @@ def MainMenu():
 
         # Look for IV's
         # If we can't find any IV's, check for menu button.
-        if len(LocateIV.Find_The_IVs(Image.open('phoneScreen.png'))) == 3:
+        #if len(LocateIV.Find_The_IVs(Image.open('phoneScreen.png'))) == 3:
             # If it returns 3 that is the 3 IVs. 
-            temp = LocateIV.Find_The_IVs(Image.open('phoneScreen.png'))
-            print(f"Attack: {list_Of_IV_Numbers[temp[0]]}  Defense: {list_Of_IV_Numbers[temp[1]]}  HP: {list_Of_IV_Numbers[temp[2]]}")
+        temp = LocateIV.Find_The_IVs(Image.open('phoneScreen.png'))
+        print(f"Attack: {list_Of_IV_Numbers[temp[0]]}  Defense: {list_Of_IV_Numbers[temp[1]]}  HP: {list_Of_IV_Numbers[temp[2]]}")
 
     MainMenu()
 
