@@ -1,5 +1,5 @@
 import os
-import time
+#import time
 import LocateIV
 import pyautogui
 from PIL import Image
@@ -43,9 +43,11 @@ def ADBCheck():
     return listOfDevices
 
 def ConnectDeviceMenu(ip = None):
+    print('This is the menu for Wireless ADB, if you are using a USB, ADB does not currently see your device.')
     print('1. Connect to a known device')
     print('2. Pair a new device (Only needed for Android 11+)')
 
+    choice = None
     if ip == None:
         choice = int(input('Select an option: '))
     else:
@@ -68,7 +70,7 @@ def ConnectDeviceMenu(ip = None):
             os.system(f'adb connect {ip}:{newPort}')
             MainMenu()
     else:
-        print('Please enter an option fromt the menu.')
+        print('Please enter an option from the menu.')
         ConnectDeviceMenu()
 
 def MainMenu():

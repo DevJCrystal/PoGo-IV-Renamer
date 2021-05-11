@@ -61,32 +61,22 @@ def Find_The_IVs(img):
 
         while x < Max_X:
 
-            # IF not whiteish then IV!
-            if (abs(pix[x,y][0] - 226) <= 50 and abs(pix[x,y][1] - 226) <= 50 and abs(pix[x,y][2] - 226) <= 50):
-                progress+=0
-            else:
+            # Non-Perfect Color  | Perfect Color
+            # R 225              | R 212
+            # G 151              | G 133
+            # B 60               | B 124
+            # I am checking if the difference is less than 15 because I don't have 
+            # enough devices to test to see if something weird happens with colors on other devices.
+
+            if (abs(pix[x,y][0] - 225) < 15 and abs(pix[x,y][1] - 151) < 15 and abs(pix[x,y][2] - 60) < 15) or \
+                (abs(pix[x,y][0] - 212) < 15 and abs(pix[x,y][1] - 133) < 15 and abs(pix[x,y][2] - 124) < 15):
                 progress+=1
+
+            if debugging:
+                print(f"[{x},{y}] - {pix[x,y]}")
             
             x+=1
 
         AllTheIV.append(Pixel_To_IV(progress))
 
     return AllTheIV
-
-
-# This was just a fun benchmark of 3000+ screenshots from my PoGo and r/pokemongobrag
-if debugging:
-    import glob
-    path = 'unsorted'
-
-    listOfImages = (glob.glob(f"{path}/*.*"))
-
-    for imgFile in listOfImages:
-        img = Image.open(imgFile)
-        print(Find_The_IVs(img))
-
-# BE WARY NOT TO PASS THIS POINT. DEV RAMBLINGS HAVE BEEN SEEN. UNTOLD HORRORS CAN COME TO ANYONE THAT READS THEM.
-
-# You know.. I was orginally going to try and make this program so I can create a model for machine learning to look at your phone screen.
-# I am not sure how Calcy (Is that how it is spelt?) can figure out the IV from just look at the Pokemon in the eyes. I think it is something with CP and weight but
-# that sounds like a lot of work. So did the using machine learning for this. I even made a script to automate labeling images. I do have a model but I believe this way makes more sense. 
