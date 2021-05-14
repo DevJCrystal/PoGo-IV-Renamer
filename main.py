@@ -1,14 +1,26 @@
 import os
+import time
 import PoGoCLI
-#import time
 import LocateIV
-#import pyautogui
+import ButtonPressing
 from PIL import Image
+
+import threading
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
 
 # Fancy list for renaming
 # Might want to make this a csv so more fonts/ascii styling can be used. 
 # TODO: Create CSV so it is easy to add and configure style. 
 list_of_iv_numbers = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮', 'Error']
+
+@app.route('/', methods=['GET'])
+def serve_iv():
+    temp_iv = request.args.get('iv', default = "0-0-0")
+    iv = temp_iv.split('-')
+    print(iv)
+    return render_template('main.html', Attack=list_of_iv_numbers[int(iv[0])], Defense=list_of_iv_numbers[int(iv[1])], Health_Points=list_of_iv_numbers[int(iv[2])])
 
 string_finder = 'findstr' if os.name == 'nt' else 'grep'
 move = 'move' if os.name == 'nt' else 'mv'
@@ -55,7 +67,12 @@ def Connect_Device_Menu(ip = None):
 
 def Check_For_Menu():
     print('Checking...')
+    time.sleep(1)
     # Temp - Using Pixel 5 to figure out process.
+    ButtonPressing.Test()
+    time.sleep(1)
+    os.popen('adb shell input swipe 500 1000 200 1000 500')
+    Check_For_Menu()
     
 
 def Main_Menu():
@@ -84,5 +101,10 @@ def Main_Menu():
 
     Main_Menu()
 
+def Web_Server():
+    app.run(host='0.0.0.0')
+
+Start_Web = threading.Thread(target = Web_Server)
+Start_Web.start()
 
 Main_Menu()

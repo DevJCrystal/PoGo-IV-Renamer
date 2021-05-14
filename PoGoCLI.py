@@ -18,7 +18,6 @@ def Get_List_Of_Devices():
     temp = temp.split('\n')
     temp[0] = ""
     temp = list(filter(None, temp))
-    print(temp)
 
     for device in temp:
         try:
@@ -39,3 +38,6 @@ def Get_List_Of_Devices():
             pass
 
     return listOfDevices
+
+def Click(x, y):
+    os.system(f'adb shell input tap {x} {y}')

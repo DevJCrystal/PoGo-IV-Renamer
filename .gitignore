@@ -4,3 +4,5 @@ __pycache__/LocateIV.cpython-38.pyc
 unsorted/
 __pycache__/PoGoCLI.cpython-38.pyc
 __pycache__/cli.cpython-38.pyc
+__pycache__/web.cpython-38.pyc
+__pycache__/flask.cpython-38.pyc

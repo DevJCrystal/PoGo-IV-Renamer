@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input type="text" value="{{ Attack }}{{ Defense }}{{ Health_Points }}" id="myInput" style="font-size: 52pt">
+<!--<button onclick="myFunction()">Copy text</button>-->
+<body onload="myFunction()">
+<script>
+function myFunction() {
+  var copyText = document.getElementById("myInput");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999)
+  }
+</script>
+
+</body>
+</html>
