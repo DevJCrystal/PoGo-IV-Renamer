@@ -6,32 +6,32 @@ debugging = False
 
 # Static information
 template = cv.imread('images/IV_Zero.png',0)
-IV_Bar_Pos = [57, 160, 264] # The y coords once we find the IV bars
-listOfPixels = [0, 17, 40, 64, 88, 112, 130, 154, 188, 202, 226, 245, 269, 293, 317, 341] # 0 IV, .., 15 IV
+iv_bar_pos = [57, 160, 264] # The y coords once we find the IV bars
+list_of_pixels = [0, 17, 40, 64, 88, 112, 130, 154, 188, 202, 226, 245, 269, 293, 317, 341] # 0 IV, .., 15 IV
 
 def Pixel_To_IV(pCount):
 
     abs_diff = lambda list_value : abs(list_value - pCount)
-    closest_value = min(listOfPixels, key=abs_diff)
+    closest_value = min(list_of_pixels, key = abs_diff)
 
-    return listOfPixels.index(closest_value)
+    return list_of_pixels.index(closest_value)
 
 def Find_The_IVs(img):
 
-    AllTheIV = []
+    all_the_ivs = []
 
-    basewidth = 1080
-    wpercent = (basewidth/float(img.size[0]))
+    base_width = 1080
+    wpercent = (base_width/float(img.size[0]))
     hsize = int((float(img.size[1])*float(wpercent)))
-    pilImage = img.resize((basewidth,hsize), Image.ANTIALIAS)
+    pil_image = img.resize((base_width,hsize), Image.ANTIALIAS)
 
     # Thanks Divakar! https://stackoverflow.com/a/32920586
-    adjImg = np.array(pilImage.convert('RGB'))
+    adj_img = np.array(pil_image.convert('RGB'))
 
     w, h = template.shape[::-1]
 
     # Apply template Matching
-    res = cv.matchTemplate(adjImg[:,:,0],template,cv.TM_CCOEFF_NORMED)
+    res = cv.matchTemplate(adj_img[:,:,0],template,cv.TM_CCOEFF_NORMED)
 
     max_loc = cv.minMaxLoc(res)[3]
     top_left = max_loc
@@ -44,15 +44,15 @@ def Find_The_IVs(img):
     w = abs(top_left[0] - bottom_right[0])
     h = abs(top_left[1] - bottom_right[1])
 
-    IV = (x, y, x + w, y + h)
-    ivBar = pilImage.crop(IV)
+    iv = (x, y, x + w, y + h)
+    iv_bar = pil_image.crop(iv)
 
     # Now we need to measure the color in the
     # This allows us to view the pixels like pixel [x,y]
-    pix = ivBar.load()
-    Max_X = ivBar.width
+    pix = iv_bar.load()
+    Max_X = iv_bar.width
 
-    for Bar_pos in IV_Bar_Pos:
+    for Bar_pos in iv_bar_pos:
 
         x = 0
         y = Bar_pos
@@ -85,8 +85,8 @@ def Find_The_IVs(img):
 
         if progress == 0 and congress < 50:
             # Means IV screen is most likely not up. 
-            AllTheIV.append(-1)
+            all_the_ivs.append(-1)
         else:
-            AllTheIV.append(Pixel_To_IV(progress))
+            all_the_ivs.append(Pixel_To_IV(progress))
 
-    return AllTheIV
+    return all_the_ivs
