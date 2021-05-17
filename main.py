@@ -32,8 +32,8 @@ list_of_iv_numbers = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '�
 
 @app.route('/', methods=['GET'])
 def serve_iv():
-    temp_iv = request.args.get('iv', default = "0-0-0")
-    iv = temp_iv.split('+')
+    temp_iv = request.args.get('iv', default = "-1+-1+-1")
+    iv = temp_iv.split(' ')
     print(iv)
     return render_template('main.html', Attack=list_of_iv_numbers[int(iv[0])], Defense=list_of_iv_numbers[int(iv[1])], Health_Points=list_of_iv_numbers[int(iv[2])])
 
@@ -88,12 +88,14 @@ def Check_For_Menu():
     ButtonPressing.Find_Button(menu_button)
     Sleep()
     last_tap = ButtonPressing.Find_Button(appraise_button)
-    print(last_tap)
     Sleep()
-    input()
+    PoGoCLI.Click(last_tap[0], last_tap[1])
+    Sleep()
+    PoGoCLI.Update_Screenshot()
     temp = LocateIV.Find_The_IVs(Image.open('phoneScreen.png'))
     PoGoCLI.Click(last_tap[0], last_tap[1])
     Sleep()
+    print(temp)
     PoGoCLI.Flask_Page(temp[0], temp[1], temp[2])
     Sleep()
     PoGoCLI.Device_Input('Copy')
